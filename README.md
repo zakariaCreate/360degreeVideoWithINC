@@ -14,18 +14,18 @@ Note : write the required command to install glob before running the .js files.
 ## Streaming holograms inside the network between two hosts
 
 1. In your terminal, run: make run
-   This will:
+   * This will:
    * compile `basic.p4`, and
    * start the topology in Mininet
    * it will configure all hosts and all switches with the appropriate P4 program, table entries.
 
 2. To ping between hosts in the topology:
-   run the following command:
-   mininet> h1 ping h2
-   mininet> h3 ping h4
+   * run the following command:
+   * mininet> h1 ping h2
+   * mininet> h3 ping h4
 
 3. To stream through the network:
-   run the following command: (Stream from host-1 to host-2)
-   mininet> xterm h1 h2
-   Node : h1> node Server
-   Node : h2> node Client
+   * run the following command: (Stream from host-1 to host-2)
+   * mininet> xterm h1 h2
+   * Node : h1> node Server
+   * Node : h2> node Client
