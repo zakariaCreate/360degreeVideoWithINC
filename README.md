@@ -1,31 +1,11 @@
-# Hologram Streaming
+# Hologram Streaming + loading on browser + BW monitoring
 
-## Stream Holograms between two nodes
+## How to run this ?
 
-1. Clone HologramStreaming repository.
-2. Inside that folder create a new folder name : "holograms".
-3. Put all the holograms ".ply" files in that "holograms" folder.
-Note : name of the holograms should start with "hologram" and followed by a digit starting from 0. (example : "hologram0.ply, hologram1.ply" and so on.)
-4. Run Server.js in one terminal by typing : node Server command.
-5. Run Client.js in onother terminal by typing : node Client command.
-Note : write the required command to install glob before running the .js files.
-
-
-## Streaming holograms inside the network between two hosts
-
-1. In your terminal, run: make run
-   This will:
-   * compile `basic.p4`, and
-   * start the topology in Mininet
-   * it will configure all hosts and all switches with the appropriate P4 program, table entries.
-
-2. To ping between hosts in the topology:
-   * run the following command:
-   * mininet> h1 ping h2
-   * mininet> h3 ping h4
-
-3. To stream through the network:
-   * run the following command: (Stream from host-1 to host-2)
-   * mininet> xterm h1 h2
-   * Node : h1> node Server
-   * Node : h2> node Client
+1. Clone this repository.
+2. Go to NFV-SDN-Holograms folder and clone draco + three.js (rename three.js to three)
+3. go to filesToOverride folder, and run ./copyFiles_from_here_to_my_VM.sh and after that run ./buildSwitches.sh to build the switch, you have just replaced its source code
+4. go back to this Folder and run ./run.sh to launch the simulation
+5. use ./cleanRepo.sh to delete all drc ply and logs files
+6. to change the simulation behavior u need to change /run_exercise.py /home/p4/tutorials/utils/run_exercise.py (cntrl + f zakaria)
+7. to change the extern written in c++ change here /home/vagrant/behavioral-model/targets/simple_switch_grpc/switch_runner.cpp and rebuild the switches by running ./buildSwitches.sh inside filesToOverride folder
