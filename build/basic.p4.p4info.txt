@@ -3,6 +3,20 @@ pkg_info {
 }
 tables {
   preamble {
+    id: 46076677
+    name: "MyIngress.swid"
+    alias: "swid"
+  }
+  action_refs {
+    id: 23929383
+  }
+  action_refs {
+    id: 21257015
+  }
+  size: 1024
+}
+tables {
+  preamble {
     id: 37375156
     name: "MyIngress.ipv4_lpm"
     alias: "ipv4_lpm"
@@ -34,6 +48,18 @@ actions {
 }
 actions {
   preamble {
+    id: 23929383
+    name: "MyIngress.set_swid"
+    alias: "set_swid"
+  }
+  params {
+    id: 1
+    name: "swid"
+    bitwidth: 7
+  }
+}
+actions {
+  preamble {
     id: 25652968
     name: "MyIngress.drop"
     alias: "drop"
@@ -55,6 +81,36 @@ actions {
     name: "port"
     bitwidth: 9
   }
+}
+registers {
+  preamble {
+    id: 375693819
+    name: "MyIngress.byte_cnt_reg"
+    alias: "byte_cnt_reg"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 32
+      }
+    }
+  }
+  size: 8
+}
+registers {
+  preamble {
+    id: 383669999
+    name: "MyIngress.last_time_reg"
+    alias: "last_time_reg"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 48
+      }
+    }
+  }
+  size: 8
 }
 type_info {
 }

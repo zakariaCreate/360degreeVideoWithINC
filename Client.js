@@ -2,9 +2,9 @@ const http = require('http');
 const fs = require('fs');
 var glob = require('glob');
 
-var url = "http://localhost:3000"
+var url = "http://10.0.1.1:3000"
 
-glob("/home/p4/HologramStream/holograms/*",function(err,files){
+glob("/home/p4/tutorials/exercises/HologramStreaming/holograms/*",function(err,files){
   if (err) {
     res.write("No more file" );
     res.end();

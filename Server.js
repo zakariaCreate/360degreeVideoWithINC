@@ -4,7 +4,7 @@ var glob = require('glob');
 
 const server = http.createServer(function(req, res) {
   let hologram = req.url.split('/')[1];
-  glob("/home/p4/HologramStream/holograms/*",function(err,files){
+  glob("/home/p4/tutorials/exercises/HologramStreaming/holograms/*",function(err,files){
     if (err) {
       console.log("No more file");
       res.end();
