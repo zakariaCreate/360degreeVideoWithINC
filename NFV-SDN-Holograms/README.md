@@ -1,4 +1,4 @@
-# NFV-SDN-Holograms
+<!-- # NFV-SDN-Holograms
 
 **For Client side - WebXR Webpage**<br />
 1) Clone this project
@@ -25,6 +25,6 @@
 
 **For Encoding and Decoding**<br />
 First you need to clone [draco repository](https://github.com/google/draco) and build it inside the NFV-SDN-Hologram project folder.
-The "PLY-holograms.html" file will send a request to port:8080 to decode the targeted files before loading and then read the decoded files from "decoded" folder, 
+The "PLY-holograms.html" file will send a request to port:8080 to decode the targeted files before loading and then read the decoded files from "decoded" folder,
 render and show in the Chrome browser.
-
+ -->
