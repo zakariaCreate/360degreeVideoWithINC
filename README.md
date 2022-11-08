@@ -15,6 +15,6 @@
 5. use ./cleanRepo.sh to delete all drc ply and logs files
 6. to change the simulation behavior u need to change /home/p4/tutorials/utils/run_exercise.py
 7. to change the extern written in c++ change here /home/vagrant/behavioral-model/targets/simple_switch_grpc/switch_runner.cpp and rebuild the switches by running ./buildSwitches.sh inside useful_files folder
-<br />check the files :
+<br />Check the following files to get an idea on how to do it :
   - ./useful_files/switch_runner_with_extern_08-09-2021_p4VM.cpp
   - ./p4CodeWithExtern_examples/basic_with_extern_call.p4
