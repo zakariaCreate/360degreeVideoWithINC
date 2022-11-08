@@ -203,44 +203,6 @@ class ExerciseRunner:
         # wait for that to finish. Not sure how to do this better
         sleep(1)
 
-        #zakaria changed here
-
-        print('')
-        print('======================================================================')
-        print('h1 ./send_probe_h1.py')
-        self.net.get("h1").cmd("./send_probe_h1.py > send_probe_h1.log 2>&1 &")
-
-        sleep(2)
-        print('')
-        print('======================================================================')
-        print('h1 ./receive_probe_h1.py')
-        self.net.get("h1").cmd("./receive_probe_h1.py > receive_probe_h1.log 2>&1 &")
-
-        sleep(2)
-        print('')
-        print('======================================================================')
-        print('h1 node Server_Encoder.js')
-        self.net.get("h1").cmd("node Server_Encoder.js > Server_Encoder.log 2>&1 &")
-
-        sleep(2)
-        print('')
-        print('======================================================================')
-        print('h2 cd NFV-SDN-Holograms/ && node join_server.js')
-        self.net.get("h2").cmd("cd NFV-SDN-Holograms/ && node join_server.js > join_server.log 2>&1 &")
-
-        sleep(2)
-        print('')
-        print('======================================================================')
-        print('h2 cd NFV-SDN-Holograms/ && node WebServer.js')
-        self.net.get("h2").cmd("cd NFV-SDN-Holograms/ && node WebServer.js > WebServer.log 2>&1 &")
-
-        sleep(2)
-        print('')
-        print('======================================================================')
-        print('h2 google-chrome --no-sandbox')
-        self.net.get("h2").cmd("google-chrome --no-sandbox 127.0.0.1:3030/PLY-hologram.html > google-chrome.log 2>&1 &")
-        #zakaria finished changing
-
         self.do_net_cli()
         # stop right after the CLI is exited
         self.net.stop()
@@ -423,3 +385,4 @@ if __name__ == '__main__':
                               args.switch_json, args.behavioral_exe, args.quiet)
 
     exercise.run_exercise()
+
