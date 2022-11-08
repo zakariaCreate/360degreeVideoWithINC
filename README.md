@@ -8,7 +8,7 @@
   - /home/p4/tutorials/utils/run_exercise.py
   - /home/p4/tutorials/utils/Makefile
 in a similar way it was done in ./useful_files/run_exercise_01-07-2022_p4VM.py and ./useful_files/Makefile_01-07-2022_p4VM resp.
-Note :
+<br />Note :
   - in ./useful_files/run_exercise_01-07-2022_p4VM.py check the code between the comment : "new code starts here" and the comment "the new code ends here"
   - in ./useful_files/Makefile_01-07-2022_p4VM we only add this flag --emit-externs
 4. go back to this Folder and run ./run.sh to launch the simulation
