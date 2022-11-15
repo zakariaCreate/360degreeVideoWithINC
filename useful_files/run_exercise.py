@@ -19,21 +19,22 @@
 # We encourage you to dissect this script to better understand the BMv2/Mininet
 # environment used by the P4 tutorial.
 #
-import argparse
-import json
-import os
-import subprocess
+import os, sys, json, subprocess, re, argparse
 from time import sleep
 
-import p4runtime_lib.simple_controller
-from mininet.cli import CLI
-from mininet.link import TCLink
+from p4_mininet import P4Switch, P4Host
+
 from mininet.net import Mininet
 from mininet.topo import Topo
-from p4_mininet import P4Host, P4Switch
+from mininet.link import TCLink, Intf #zakaria
+from mininet.cli import CLI
+
 from p4runtime_switch import P4RuntimeSwitch
+import p4runtime_lib.simple_controller
 
+from mininet.node import Controller, RemoteController
 
+hosts = []
 def configureP4Switch(**switch_args):
     """ Helper class that is called by mininet to initialize
         the virtual P4 switches. The purpose is to ensure each
@@ -102,14 +103,22 @@ class ExerciseTopo(Topo):
             self.addLink(host_name, sw_name,
                          delay=link['latency'], bw=link['bandwidth'],
                          port2=sw_port)
-
+            print("**********************************")
+            print("node 1 : "+str(host_name))
+            print("node 2 : "+str(sw_name))
+            print("link BW "+str(link['bandwidth']))
+            print("**********************************")
         for link in switch_links:
             sw1_name, sw1_port = self.parse_switch_node(link['node1'])
             sw2_name, sw2_port = self.parse_switch_node(link['node2'])
             self.addLink(sw1_name, sw2_name,
                         port1=sw1_port, port2=sw2_port,
                         delay=link['latency'], bw=link['bandwidth'])
-
+            print("**********************************")
+            print("node 1 : "+str(sw1_name))
+            print("node 2 : "+str(sw2_name))
+            print("link BW "+str(link['bandwidth']))
+            print("**********************************")
 
     def parse_switch_node(self, node):
         assert(len(node.split('-')) == 2)
@@ -199,13 +208,73 @@ class ExerciseRunner:
         # some programming that must happen after the net has started
         self.program_hosts()
         self.program_switches()
-
+        # Intf( 'eth0', node=s1 )
         # wait for that to finish. Not sure how to do this better
-        sleep(1)
 
-        self.do_net_cli()
+
+        #without INC
+        print('')
+        print('======================================================================')
+        print('h1 ./send_probe_h1.py')
+        self.net.get("h1").cmd("./send_probe_h1.py > send_probe_h1.log 2>&1 &")
+
+        # sleep(2)
+        print('')
+        print('======================================================================')
+        print('h1 ./receive_probe_h1.py')
+        self.net.get("h1").cmd("./receive_probe_h1.py > network_load_withoutINC.csv 2>&1 &")
+
+        # sleep(3)
+        print('')
+        print('======================================================================')
+        print('h2 ./sendvideoh2.py')
+        self.net.get("h2").cmd("./sendvideoh2.py > sendvideoh2.py.log 2>&1 &")
+
+        sleep(2)
+        print('')
+        print('======================================================================')
+        print('h1 ./receivevideoh1.py')
+        self.net.get("h1").cmd("./receivevideoh1.py > receivevideoh1.py.log 2>&1 &" )
+
+        #with INC
+        print('')
+        print('======================================================================')
+        print('h3 ./send_probe_h3.py')
+        self.net.get("h3").cmd("./send_probe_h3.py > send_probe_h3.log 2>&1 &")
+
+        # sleep(2)
+        print('')
+        print('======================================================================')
+        print('h3 ./receive_probe_h3.py')
+        self.net.get("h3").cmd("./receive_probe_h3.py > network_load_withINC.csv 2>&1 &")
+
+        # sleep(3)
+        print('')
+        print('======================================================================')
+        print('h4 ./sendvideoh4.py')
+        self.net.get("h4").cmd("./sendvideoh4.py > sendvideoh4.py.log 2>&1 &")
+
+        sleep(2)
+        print('')
+        print('======================================================================')
+        print('h3 ./receivevideoh3.py')
+        self.net.get("h3").cmd("./receivevideoh3.py > receivevideoh3.py.log 2>&1 &" )
+
+        # minutes=13
+        minutes=8
+        # minutes=30
+        # minutes = 20
+        print('======================================================================')
+        print('sleep '+str(minutes)+' min waiting the end of the simulation... ')
+        sleep(minutes*60)
+        print(str(minutes)+' min done ! stop the simulation !')
+
+        # self.do_net_cli()
+        #end changing
+
         # stop right after the CLI is exited
         self.net.stop()
+        exit()
 
 
     def parse_links(self, unparsed_links):
@@ -223,6 +292,7 @@ class ExerciseRunner:
             link_dict = {'node1':s,
                         'node2':t,
                         'latency':'0ms',
+                        # 'bandwidth':10
                         'bandwidth':None
                         }
             if len(link) > 2:
@@ -251,13 +321,25 @@ class ExerciseRunner:
                                 log_console=True,
                                 pcap_dump=self.pcap_dir)
 
-        self.topo = ExerciseTopo(self.hosts, self.switches, self.links, self.log_dir, self.bmv2_exe, self.pcap_dir)
+        self.topo = ExerciseTopo(self.hosts,
+                                self.switches,
+                                self.links,
+                                self.log_dir,
+                                self.bmv2_exe,
+                                self.pcap_dir)
 
         self.net = Mininet(topo = self.topo,
                       link = TCLink,
                       host = P4Host,
                       switch = defaultSwitchClass,
                       controller = None)
+                      # controller = RemoteController)
+        # self.net.addController('ccc1',
+        #                         controller = RemoteController,
+        #                         # ip = "172.17.0.2",
+        #                         ip = "127.0.0.1",
+        #                         port = 6653)
+
 
     def program_switch_p4runtime(self, sw_name, sw_dict):
         """ This method will use P4Runtime to program the switch using the
@@ -275,9 +357,7 @@ class ExerciseRunner:
                 device_id=device_id,
                 sw_conf_file=sw_conf_file,
                 workdir=os.getcwd(),
-                proto_dump_fpath=outfile,
-                runtime_json=runtime_json
-            )
+                proto_dump_fpath=outfile)
 
     def program_switch_cli(self, sw_name, sw_dict):
         """ This method will start up the CLI and use the contents of the
@@ -385,4 +465,3 @@ if __name__ == '__main__':
                               args.switch_json, args.behavioral_exe, args.quiet)
 
     exercise.run_exercise()
-

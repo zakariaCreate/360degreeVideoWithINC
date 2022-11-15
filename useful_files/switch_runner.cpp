@@ -917,7 +917,7 @@ struct udpheader {
           string fileNameDestination = "/home/p4/tutorials/exercises/tmpFiles/copiedPictures/" ;
           //string command = "cp " + fileName + " " + fileNameDestination + to_string(ipSrcAddr.get_int()) + "_" + to_string(ipDstAddr.get_int()) + "_" + to_string(protocol.get_int()) + "_" + to_string(identification.get_int()) + ".jpg" ;
           // string command = "/bin/time -f \"%P\" -o /home/p4/tutorials/exercises/results/CPUResults/mogrify.log -a mogrify -resize 10% " + fileName ; //with cpu monitoring
-          string command = "mogrify -resize 10% " + fileName ;
+          string command = "mogrify -resize 55% " + fileName ;
           cout << "Execution of the command : " + command << endl ;
           system(command.c_str()) ;
 
