@@ -193,7 +193,36 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 }
 
 //declaration of the extern
+extern extern_example {
+    //Constructor
+    extern_example();
 
+    void method_example(in bit<64> ethDstAddr, //eth
+                        in bit<64>  ethSrcAddr,
+                        in bit<16>  etherType,
+                        in bit<8> version, //ip
+                        in bit<8>  ihl,
+                        in bit<8>  diffserv,
+                        in bit<16>  totalLen,
+                        in bit<16>  identification,
+                        in bit<8>  flags,
+                        in bit<16>  fragOffset,
+                        in bit<8>  ttl,
+                        in bit<8>  protocol,
+                        in bit<16>  hdrChecksum,
+                        in bit<32>  ipSrcAddr,
+                        in bit<32>  ipDstAddr,
+                        in bit<16> udpSrcPort, //udp
+                        in bit<16>  udpDstPort,
+                        in bit<16>  length_,
+                        in bit<16>  checksum,
+                        in bit<16> egress_spec,
+                        inout bit<32> packetSentSize);
+
+
+}
+
+extern_example() transcoder_instance;
 
 
 
@@ -248,13 +277,118 @@ control MyIngress(inout headers hdr,
 
     apply {
         if (hdr.ipv4.isValid()){
+            bit<32> packetSentSize;
+            packetSentSize = 0;
+
             ipv4_lpm.apply();
 
-            bit<32> byte_cnt;
-            // increment byte cnt for this packet's port
-            byte_cnt_reg.read(byte_cnt, (bit<32>)standard_metadata.egress_spec);
-            byte_cnt = byte_cnt + standard_metadata.packet_length;
-            byte_cnt_reg.write((bit<32>)standard_metadata.egress_spec, byte_cnt);
+           
+            //if (hdr.ethernet.srcAddr == 8796093024512) {
+            //check if we are in switch 4, based on the source mac address
+            if (hdr.ethernet.srcAddr == 8796093023232) {
+            // if (hdr.ethernet.srcAddr == 8796093026304 && hdr.ipv4.dstAddr != 167772417) {
+                if (hdr.tcp.isValid()){
+                    transcoder_instance.method_example((bit<64>)hdr.ethernet.dstAddr, //eth
+                        (bit<64>)hdr.ethernet.srcAddr,
+                        (bit<16>)hdr.ethernet.etherType,
+                        (bit<8>)hdr.ipv4.version, //ip
+                        (bit<8>)hdr.ipv4.ihl,
+                        (bit<8>)hdr.ipv4.diffserv,
+                        (bit<16>)hdr.ipv4.totalLen,
+                        (bit<16>)hdr.ipv4.identification,
+                        (bit<8>)hdr.ipv4.flags,
+                        (bit<16>)hdr.ipv4.fragOffset,
+                        (bit<8>)hdr.ipv4.ttl,
+                        (bit<8>)hdr.ipv4.protocol,
+                        (bit<16>)hdr.ipv4.hdrChecksum,
+                        (bit<32>)hdr.ipv4.srcAddr,
+                        (bit<32>)hdr.ipv4.dstAddr,
+                        (bit<16>)0, //udp
+                        (bit<16>)0,
+                        (bit<16>)0,
+                        (bit<16>)0,
+                        (bit<16>)standard_metadata.egress_spec,
+                        packetSentSize);
+
+                } else if (hdr.udp.isValid()){
+                    transcoder_instance.method_example((bit<64>)hdr.ethernet.dstAddr, //eth
+                        (bit<64>)hdr.ethernet.srcAddr,
+                        (bit<16>)hdr.ethernet.etherType,
+                        (bit<8>)hdr.ipv4.version, //ip
+                        (bit<8>)hdr.ipv4.ihl,
+                        (bit<8>)hdr.ipv4.diffserv,
+                        (bit<16>)hdr.ipv4.totalLen,
+                        (bit<16>)hdr.ipv4.identification,
+                        (bit<8>)hdr.ipv4.flags,
+                        (bit<16>)hdr.ipv4.fragOffset,
+                        (bit<8>)hdr.ipv4.ttl,
+                        (bit<8>)hdr.ipv4.protocol,
+                        (bit<16>)hdr.ipv4.hdrChecksum,
+                        (bit<32>)hdr.ipv4.srcAddr,
+                        (bit<32>)hdr.ipv4.dstAddr,
+                        (bit<16>)hdr.udp.srcPort, //udp
+                        (bit<16>)hdr.udp.dstPort,
+                        (bit<16>)hdr.udp.length_,
+                        (bit<16>)hdr.udp.checksum,
+                        (bit<16>)standard_metadata.egress_spec,
+                        packetSentSize);
+
+                } else {
+                    transcoder_instance.method_example((bit<64>)hdr.ethernet.dstAddr, //eth
+                        (bit<64>)hdr.ethernet.srcAddr,
+                        (bit<16>)hdr.ethernet.etherType,
+                        (bit<8>)hdr.ipv4.version, //ip
+                        (bit<8>)hdr.ipv4.ihl,
+                        (bit<8>)hdr.ipv4.diffserv,
+                        (bit<16>)hdr.ipv4.totalLen,
+                        (bit<16>)hdr.ipv4.identification,
+                        (bit<8>)hdr.ipv4.flags,
+                        (bit<16>)hdr.ipv4.fragOffset,
+                        (bit<8>)hdr.ipv4.ttl,
+                        (bit<8>)hdr.ipv4.protocol,
+                        (bit<16>)hdr.ipv4.hdrChecksum,
+                        (bit<32>)hdr.ipv4.srcAddr,
+                        (bit<32>)hdr.ipv4.dstAddr,
+                        (bit<16>)0, //udp
+                        (bit<16>)0,
+                        (bit<16>)0,
+                        (bit<16>)0,
+                        (bit<16>)standard_metadata.egress_spec,
+                        packetSentSize);
+    			}
+
+
+
+                //Drop all fragments
+                if ((hdr.ipv4.flags & 1 ) == 1 || hdr.ipv4.fragOffset!=0) {
+                     //last fragment
+                     if ((hdr.ipv4.flags & 1 ) == 0 && hdr.ipv4.fragOffset!=0){
+                        bit<32> byte_cnt;
+                        // increment byte cnt for this packet's port
+                        byte_cnt_reg.read(byte_cnt, (bit<32>)standard_metadata.egress_spec);
+                        byte_cnt = byte_cnt + packetSentSize;
+                        log_msg("
+                        INFO packetSentSize : packetSentSize : {}",
+                        {packetSentSize});
+                        byte_cnt_reg.write((bit<32>)standard_metadata.egress_spec, byte_cnt);
+                     }
+                     drop();
+
+                }else{
+                    bit<32> byte_cnt;
+                    // increment byte cnt for this packet's port
+                    byte_cnt_reg.read(byte_cnt, (bit<32>)standard_metadata.egress_spec);
+                    byte_cnt = byte_cnt + standard_metadata.packet_length;
+                    byte_cnt_reg.write((bit<32>)standard_metadata.egress_spec, byte_cnt);
+                }
+            }else{
+                bit<32> byte_cnt;
+                // increment byte cnt for this packet's port
+                byte_cnt_reg.read(byte_cnt, (bit<32>)standard_metadata.egress_spec);
+                byte_cnt = byte_cnt + standard_metadata.packet_length;
+                byte_cnt_reg.write((bit<32>)standard_metadata.egress_spec, byte_cnt);
+            }
+
             //update also the ingress port with what went in : start
             bit<32> byte_cnt_1;
             // increment byte cnt for this packet's ingress port
@@ -262,11 +396,7 @@ control MyIngress(inout headers hdr,
             byte_cnt_1 = byte_cnt_1 + standard_metadata.packet_length;
             byte_cnt_reg.write((bit<32>)standard_metadata.ingress_port, byte_cnt_1);
             //update also the ingress port with what went in : end
-                   
         } else if (hdr.probe.isValid()) {
-            log_msg("
-              INFO probe packet egress port : {}",
-            {meta.egress_spec});
             standard_metadata.egress_spec = (bit<9>)meta.egress_spec;
             hdr.probe.hop_cnt = hdr.probe.hop_cnt + 1;
 
@@ -312,7 +442,56 @@ control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
 
+    // // count the number of bytes seen since the last probe
+    // register<bit<32>>(MAX_PORTS) byte_cnt_reg;
+    // // remember the time of the last probe
+    // register<time_t>(MAX_PORTS) last_time_reg;
+    //
+    // action set_swid(bit<7> swid) {
+    //     hdr.probe_data[0].swid = swid;
+    // }
+    //
+    // table swid {
+    //     actions = {
+    //         set_swid;
+    //         NoAction;
+    //     }
+    //     default_action = NoAction();
+    // }
+
     apply {
+        // bit<32> byte_cnt;
+        // bit<32> new_byte_cnt;
+        // time_t last_time;
+        // time_t cur_time = standard_metadata.egress_global_timestamp;
+        // // increment byte cnt for this packet's port
+        // byte_cnt_reg.read(byte_cnt, (bit<32>)standard_metadata.egress_port);
+        // byte_cnt = byte_cnt + standard_metadata.packet_length;
+        // // reset the byte count when a probe packet passes through
+        // new_byte_cnt = (hdr.probe.isValid()) ? 0 : byte_cnt;
+        // byte_cnt_reg.write((bit<32>)standard_metadata.egress_port, new_byte_cnt);
+        //
+        //
+        // if (hdr.probe.isValid()) {
+        //     // fill out probe fields
+        //     hdr.probe_data.push_front(1);
+        //     hdr.probe_data[0].setValid();
+        //     if (hdr.probe.hop_cnt == 1) {
+        //         hdr.probe_data[0].bos = 1;
+        //     }
+        //     else {
+        //         hdr.probe_data[0].bos = 0;
+        //     }
+        //     // set switch ID field
+        //     swid.apply();
+        //     hdr.probe_data[0].port = (bit<8>)standard_metadata.egress_port;
+        //     hdr.probe_data[0].byte_cnt = byte_cnt;
+        //     // read / update the last_time_reg
+        //     last_time_reg.read(last_time, (bit<32>)standard_metadata.egress_port);
+        //     last_time_reg.write((bit<32>)standard_metadata.egress_port, cur_time);
+        //     hdr.probe_data[0].last_time = last_time;
+        //     hdr.probe_data[0].cur_time = cur_time;
+        // }
 
     }
 }
@@ -326,7 +505,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 	update_checksum(
 	    hdr.ipv4.isValid(),
             { hdr.ipv4.version,
-	            hdr.ipv4.ihl,
+	      hdr.ipv4.ihl,
               hdr.ipv4.diffserv,
               hdr.ipv4.totalLen,
               hdr.ipv4.identification,
