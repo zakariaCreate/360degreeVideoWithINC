@@ -1,0 +1,2 @@
+switch_runner.cpp:863:18: error: aggregate ‘std::ofstream headerFile’ has incomplete type and cannot be defined
+  863 |         ofstream headerFile ;
