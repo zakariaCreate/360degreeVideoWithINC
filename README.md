@@ -5,4 +5,5 @@
 1. Edit the Makefile located next to run_exercise.py by adding the flag --emit-externs to $(P4C)
 2. Install all the modules needed by the python programs, check files *.log for errors
 3. Rebuild the switch by running the build_switches.sh script (you may need to run it as sudo)
-4. Execute ./run.sh
+4. Install the transcoder named mogrify by running : sudo apt-get install imagemagick
+5. Execute ./run.sh
