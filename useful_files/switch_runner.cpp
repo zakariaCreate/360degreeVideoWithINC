@@ -57,6 +57,14 @@
 #include <bm/SimpleSwitch.h>
 #include <bm/bm_runtime/bm_runtime.h>
 
+
+
+namespace sswitch_runtime {
+    shared_ptr<SimpleSwitchIf> get_handler(SimpleSwitch *sw);
+}  // namespace sswitch_runtime
+#endif  // WITH_THRIFT
+
+//pay attention where you paste your includes
 #include <bm/bm_sim/extern.h>// zakaria
 #include <bm/bm_sim/P4Objects.h>// zakaria
 #include <stdlib.h> // zakaria
@@ -65,11 +73,7 @@
 #include <fstream> // zakaria
 #include <iostream> // zakaria
 #include <bitset> // zakaria
-
-namespace sswitch_runtime {
-    shared_ptr<SimpleSwitchIf> get_handler(SimpleSwitch *sw);
-}  // namespace sswitch_runtime
-#endif  // WITH_THRIFT
+#include <arpa/inet.h> // zakaria
 
 namespace sswitch_grpc {
 
